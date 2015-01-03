@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Author game thing {% endblock %}
+
+{% block content %}
+      <div class="starter-template">
+        <h1>Round: {{ currentRound }}; Points: {{ points }}</h1>
+      </div>
+      <div class="starter-template">
+        <p>Who might have written this?</p>
+        <p class="lead">&#8220;{{ sentence }}&#8221;</p>
+        <form method="POST" action="/answer">
+          {% for author in authors %}
+          <button name="guess" value="{{ author.id }}" class="btn btn-lg">{{ author.name }}</button>
+          {% endfor %}
+        </form>
+      </div>
+      <div class="starter-template">
+        <a href="/reset" class="btn btn-danger">Start again</a>
+      </div>
+{% endblock %}

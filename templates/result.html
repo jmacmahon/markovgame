@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+   <div class="starter-template">
+     <h1>{% block result %}{% endblock %}</h1>
+   </div>
+   <div class="starter-template">
+     {% block resultMessage %}
+     {% endblock %}
+   </div>
+   <div class="starter-template">
+     <a href="/" class="btn btn-success">Next &gt;</a>
+   </div>
+{% endblock %}
