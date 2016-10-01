@@ -9,6 +9,7 @@ del punctuation_strip_mapper[ord('.')]
 class Trainer(object):
     def __init__(self, training_text):
         self._training_text = training_text
+        self._trained = False
 
     def _tokenize(self):
         stripped = self._training_text.translate(punctuation_strip_mapper)
@@ -16,8 +17,8 @@ class Trainer(object):
 
     def _count_words(self):
         counts = {}
-        base_frequencies = {}
-        total_words = 0
+        sentence_start_frequencies = {}
+        total_sentences = 0
         for (first, second) in double_iterate(self._words):
             if not first in counts:
                 counts[first] = {'total': 1, 'words': {second: 1}}
@@ -28,22 +29,39 @@ class Trainer(object):
                 counts[first]['words'][second] += 1
                 counts[first]['total'] += 1
 
-            if not first in base_frequencies:
-                base_frequencies[first] = 1
-            else:
-                base_frequencies[first] += 1
-            total_words += 1
+            if first == '.':
+                if not second in sentence_start_frequencies:
+                    sentence_start_frequencies[second] = 1
+                else:
+                    sentence_start_frequencies[second] += 1
+                total_sentences += 1
         self._counts = counts
-        self._base_frequencies = base_frequencies
-        self._total_words = total_words
+        self._sentence_start_frequencies = sentence_start_frequencies
+        self._total_sentences = total_sentences
 
     def _process_table(self):
-        pass
+        self._sentence_start_picker = make_random_picker(
+            self._sentence_start_frequencies)
+        counts_pickers = {}
+        for (word, word_data) in self._counts.items():
+            picker = make_random_picker(word_data['words'])
+            counts_pickers[word] = {'total': word_data['total'],
+                                    'picker': picker}
+        self._counts_pickers = counts_pickers
 
     def train(self):
         self._tokenize()
         self._count_words()
         self._process_table()
+        self._trained = False
+
+    @property
+    def compiled(self):
+        if not self._trained:
+            self.train()
+        return {'total_sentences': self._total_sentences,
+                'sentence_start_picker': self._sentence_start_picker,
+                'counts_pickers': self._counts_pickers}
 
 
 def make_random_picker(frequencies):
