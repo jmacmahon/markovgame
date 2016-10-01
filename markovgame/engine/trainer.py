@@ -1,7 +1,6 @@
 from nltk.tokenize import word_tokenize
 from string import punctuation
 
-
 punctuation_strip_mapper = dict([(ord(c), None) for c in punctuation + "“‘’”"])
 del punctuation_strip_mapper[ord('.')]
 
