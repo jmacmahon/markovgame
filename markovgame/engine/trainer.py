@@ -20,9 +20,9 @@ class Trainer(object):
         sentence_start_frequencies = {}
         total_sentences = 0
         for (first, second) in double_iterate(self._words):
-            if not first in counts:
+            if first not in counts:
                 counts[first] = {'total': 1, 'words': {second: 1}}
-            elif not second in counts[first]['words']:
+            elif second not in counts[first]['words']:
                 counts[first]['words'][second] = 1
                 counts[first]['total'] += 1
             else:
@@ -30,7 +30,7 @@ class Trainer(object):
                 counts[first]['total'] += 1
 
             if first == '.':
-                if not second in sentence_start_frequencies:
+                if second not in sentence_start_frequencies:
                     sentence_start_frequencies[second] = 1
                 else:
                     sentence_start_frequencies[second] += 1
