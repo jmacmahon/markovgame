@@ -35,3 +35,34 @@ def pick(picker, total):
         except KeyError:
             number -= 1
     raise ValueError('Number not found in picker')
+
+
+NO_SPACE_BEFORE_WORDS = ["''", "'", ',', '.', ':', ';', ')', "'s", "n't", "'m",
+                         "'re", '!', '%', '?']
+NO_SPACE_AFTER_WORDS = ['``', '`', '(']
+REPLACEMENTS = {'``': '“', "''": '”', '`': '‘', "'": '’'}
+
+
+def replace(word):
+    try:
+        return REPLACEMENTS[word]
+    except KeyError:
+        return word
+
+
+def format(generator):
+    sentence = ""
+    no_space = False
+    for word in generator:
+        if word in NO_SPACE_BEFORE_WORDS:
+            sentence += replace(word)
+        else:
+            if not no_space:
+                sentence += ' '
+            no_space = False
+            if word in NO_SPACE_AFTER_WORDS:
+                no_space = True
+                sentence += replace(word)
+            else:
+                sentence += replace(word)
+    return sentence.strip()

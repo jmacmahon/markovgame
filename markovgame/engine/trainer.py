@@ -1,7 +1,8 @@
 from nltk.tokenize import word_tokenize
 from string import punctuation
 
-punctuation_strip_mapper = dict([(ord(c), None) for c in punctuation + "“‘’”"])
+punctuation_strip_mapper = dict(
+    [(ord(c), None) for c in punctuation + "“‘’”–"])
 del punctuation_strip_mapper[ord('.')]
 
 
@@ -11,8 +12,10 @@ class Trainer(object):
         self._trained = False
 
     def _tokenize(self):
-        stripped = self._training_text.translate(punctuation_strip_mapper)
-        self._words = word_tokenize(stripped)
+        ugly_print = self._training_text.translate(dict(
+            [(ord(i), o) for (i, o) in zip("“‘’”–", "\"''\"-")]
+        ))
+        self._words = word_tokenize(ugly_print)
 
     def _count_words(self):
         counts = {}
