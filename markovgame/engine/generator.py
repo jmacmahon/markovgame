@@ -2,9 +2,21 @@ from random import randint
 
 
 class Generator(object):
-    def __init__(self, total_sentences, sentence_start_picker, counts_pickers):
+    def __init__(self, total_sentences, sentence_start_frequencies, counts):
         self._total_sentences = total_sentences
-        self._sentence_start_picker = sentence_start_picker
+        self._sentence_start_frequencies = sentence_start_frequencies
+        self._counts = counts
+
+        self._process_table()
+
+    def _process_table(self):
+        self._sentence_start_picker = make_random_picker(
+            self._sentence_start_frequencies)
+        counts_pickers = {}
+        for (word, word_data) in self._counts.items():
+            picker = make_random_picker(word_data['words'])
+            counts_pickers[word] = {'total': word_data['total'],
+                                    'picker': picker}
         self._counts_pickers = counts_pickers
 
     def start_word(self):
@@ -24,6 +36,15 @@ class Generator(object):
         while not prev == '.':
             prev = self.next_word(prev)
             yield prev
+
+
+def make_random_picker(frequencies):
+    picker = {}
+    i = 0
+    for (item, count) in frequencies.items():
+        picker[i] = item
+        i += count
+    return picker
 
 
 def pick(picker, total):

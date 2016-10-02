@@ -41,20 +41,9 @@ class Trainer(object):
         self._sentence_start_frequencies = sentence_start_frequencies
         self._total_sentences = total_sentences
 
-    def _process_table(self):
-        self._sentence_start_picker = make_random_picker(
-            self._sentence_start_frequencies)
-        counts_pickers = {}
-        for (word, word_data) in self._counts.items():
-            picker = make_random_picker(word_data['words'])
-            counts_pickers[word] = {'total': word_data['total'],
-                                    'picker': picker}
-        self._counts_pickers = counts_pickers
-
     def train(self):
         self._tokenize()
         self._count_words()
-        self._process_table()
         self._trained = False
 
     @property
@@ -62,17 +51,8 @@ class Trainer(object):
         if not self._trained:
             self.train()
         return {'total_sentences': self._total_sentences,
-                'sentence_start_picker': self._sentence_start_picker,
-                'counts_pickers': self._counts_pickers}
-
-
-def make_random_picker(frequencies):
-    picker = {}
-    i = 0
-    for (item, count) in frequencies.items():
-        picker[i] = item
-        i += count
-    return picker
+                'sentence_start_frequencies': self._sentence_start_frequencies,
+                'counts': self._counts}
 
 
 def double_iterate(iterable_):
